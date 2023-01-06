@@ -55,7 +55,7 @@ public class ValiImageController {
     @Operation(summary = "获取验证码")
     @GetMapping("/index/valiImage")
     public void validateCode(HttpServletRequest request,
-                             HttpServletResponse response) throws ServletException, IOException {
+                             HttpServletResponse response) {
         // 设置响应报头信息
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-cache");

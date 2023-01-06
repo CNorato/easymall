@@ -18,7 +18,8 @@ import java.io.IOException;
 public class CustomizeAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException {
         JSONObject json = new JSONObject();
         json.put("status", 500);
         json.put("message", "权限不足");

@@ -108,7 +108,6 @@ public class OrderController {
         JSONObject json = new JSONObject();
         try {
             orderService.payorder(orderId);
-            ;
         } catch (Exception e) {
             json.put("status", 500);
             return json;

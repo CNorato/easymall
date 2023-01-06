@@ -18,7 +18,7 @@ import java.io.IOException;
 public class CustomizeAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         JSONObject json = new JSONObject();
         json.put("status", 500);
         json.put("message", "登录失败");

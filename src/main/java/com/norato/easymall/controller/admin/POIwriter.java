@@ -90,12 +90,12 @@ public class POIwriter {
         return sheet;
     }
 
-    /**
-     * 设置第一行列头的样式
-     *
-     * @param workbook 工作簿对象
-     * @return 单元格样式对象
-     */
+//    /**
+//     * 设置第一行列头的样式
+//     *
+//     * @param workbook 工作簿对象
+//     * @return 单元格样式对象
+//     */
 //    private static CellStyle buildHeadCellStyle(Workbook workbook) {
 //        CellStyle style = workbook.createCellStyle();
 //        // 水平居中
@@ -128,7 +128,6 @@ public class POIwriter {
      *
      * @param data 源数据
      * @param row  行对象
-     * @return
      */
     private static void convertDataToRow(Product data, Row row) {
         int cellNum = 0;

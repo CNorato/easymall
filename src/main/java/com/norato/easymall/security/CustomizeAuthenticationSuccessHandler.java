@@ -22,7 +22,7 @@ import java.io.IOException;
 public class CustomizeAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         String requestURI = request.getRequestURI();
         JSONObject json = new JSONObject();
         User user = (User) authentication.getPrincipal();

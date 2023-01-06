@@ -31,8 +31,6 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public void updateCart(Cart cart) {
-//        update cart set num=num+#{num} where cartID=#{cartID}
-        QueryWrapper<Cart> wrapper = new QueryWrapper<>();
         Cart cart1 = cartMapper.selectById(cart.getCartId());
         cart1.setNum(cart1.getNum() + cart.getNum());
         cartMapper.updateById(cart1);
@@ -47,8 +45,6 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public void updateBuyNum(Cart cart) {
-//        update cart set num=#{num} where cartID=#{cartID}
-        QueryWrapper<Cart> wrapper = new QueryWrapper<>();
         Cart cart1 = cartMapper.selectById(cart.getCartId());
         cart1.setNum(cart.getNum());
         cartMapper.updateById(cart1);

@@ -110,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItem> orderItems = orderItemMapper.selectList(wrapper);
 
 		for(OrderItem orderItem:orderItems){
-			Map<String,Object> map=new HashMap<String,Object>();
+			Map<String,Object> map= new HashMap<>();
 			map.put("pid", orderItem.getProductId());
 			map.put("buynum", -orderItem.getBuynum());
 			updateSoldNum(map);	              ////// 修改

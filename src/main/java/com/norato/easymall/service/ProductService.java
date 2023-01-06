@@ -12,33 +12,33 @@ import java.util.Map;
 
 public interface ProductService {
     //查找商品类别
-    public List<String> allcategories();
+    List<String> allcategories();
 
     //查找商品
-    public List<Product> prodlist(Map<String, Object> map);
+    List<Product> prodlist(Map<String, Object> map);
 
-    public Page<Product> selectPage(Page<Product> page, QueryWrapper<Product> wrapper);
+    Page<Product> selectPage(Page<Product> page, QueryWrapper<Product> wrapper);
 
     //查找商品详情
-    public Product prodInfo(String pid);
+    Product prodInfo(String pid);
 
     //分类查找商品
-    public List<Product> prodclass(String proclass);
+    List<Product> prodclass(String proclass);
 
-    public Product oneProduct(String product_id);
+    Product oneProduct(String product_id);
 
-    public String save(ProductInfo myProduct, HttpServletRequest request);
+    String save(ProductInfo myProduct, HttpServletRequest request);
 
-    public List<Product> allprods();
+    List<Product> allprods();
 
-    public void updateSaleStatus(Map<String, Object> map);
+    void updateSaleStatus(Map<String, Object> map);
 
     //更新商品
-    public void updateProduct(Product Product);
+    void updateProduct(Product Product);
 
     //删除商品
-    public void deleteProduct(String id);
+    void deleteProduct(String id);
 
     //查询商品
-    public List<Product> findProductById(Integer Id);
+    List<Product> findProductById(Integer Id);
 }

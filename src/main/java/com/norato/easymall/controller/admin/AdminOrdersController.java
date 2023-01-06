@@ -6,7 +6,6 @@ import com.norato.easymall.dto.SaleProduct;
 import com.norato.easymall.entity.Order;
 import com.norato.easymall.entity.OrderItem;
 import com.norato.easymall.entity.Product;
-import com.norato.easymall.service.CartService;
 import com.norato.easymall.service.OrderService;
 import com.norato.easymall.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;

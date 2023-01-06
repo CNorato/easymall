@@ -19,9 +19,6 @@ public class CustomizeLoginFilter extends AbstractAuthenticationProcessingFilter
 
     public static final String SPRING_SECURITY_FORM_PASSWORD_KEY = "password";
 
-    private static final AntPathRequestMatcher ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/user/login",
-            "POST");
-
     private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
 
     private String passwordParameter = SPRING_SECURITY_FORM_PASSWORD_KEY;
@@ -37,13 +34,13 @@ public class CustomizeLoginFilter extends AbstractAuthenticationProcessingFilter
     }
 
 
-    /**  以下为全盘照抄 UsernamePasswordAuthenticationFilter **/
+    /*  以下为全盘照抄 UsernamePasswordAuthenticationFilter */
 
 
     /**
      * detail放入request
-     * @param request
-     * @param authRequest
+     * @param request 请求
+     * @param authRequest authentication
      */
     protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authRequest) {
         authRequest.setDetails(request);
