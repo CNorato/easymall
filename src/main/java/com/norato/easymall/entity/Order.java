@@ -8,7 +8,7 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 @Data
-@TableName(value = "order")
+@TableName(value = "orders")
 public class Order {
 
     @TableId(value = "id", type = IdType.AUTO)
