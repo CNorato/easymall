@@ -1,6 +1,8 @@
 package com.norato.easymall.service;
 
 
+import com.norato.easymall.dto.OrderInfo;
+import com.norato.easymall.dto.SaleProduct;
 import com.norato.easymall.entity.Order;
 import com.norato.easymall.entity.OrderItem;
 
@@ -24,5 +26,9 @@ public interface OrderService {
 
     void delorder(String id);
 
+    List<OrderInfo> findOrderInfoByUserId(Integer userId);
 
+    List<SaleProduct> findSaleProduct();
+
+    List<OrderInfo> findOrderInfoByPaystate(Integer paystate);
 }

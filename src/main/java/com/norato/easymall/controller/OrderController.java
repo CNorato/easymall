@@ -1,12 +1,9 @@
 package com.norato.easymall.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.norato.easymall.dto.OrderInfo;
+import com.norato.easymall.dto.result.Result;
 import com.norato.easymall.entity.Order;
-import com.norato.easymall.entity.OrderItem;
-import com.norato.easymall.entity.Product;
 import com.norato.easymall.service.OrderService;
-import com.norato.easymall.service.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,12 +25,9 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private ProductService productsService;
-
     @Operation(summary = "添加订单, 该方法较为奇葩, 建议重构")
     @PostMapping("/addOrder")
-    public JSONObject addOrder(HttpServletRequest request) {
+    public Result addOrder(HttpServletRequest request) {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time = df.format(new Date());
@@ -59,76 +53,53 @@ public class OrderController {
         order.setId(UUID.randomUUID().toString());
         order.setPaystate(0);
 
-        JSONObject json = new JSONObject();
+        Result result = new Result();
         try {
             orderService.addOrder(s, order);
         } catch (Exception e) {
-            json.put("status", 200);
-            return json;
+            return result.fail().msg(e.getMessage());
         }
-        json.put("status", 200);
-        return json;
+        return result.success().msg("添加订单成功");
     }
 
     @Operation(summary = "根据用户id获取订单")
     @GetMapping("/showorder")
-    public JSONObject showorder(String userId) {
-        List<OrderInfo> orderInfoList = findOrderInfoByUserId(Integer.parseInt(userId));
-        JSONObject json = new JSONObject();
-        json.put("data", orderInfoList);
-        json.put("length", orderInfoList.size());
-        return json;
-    }
-
-    private List<OrderInfo> findOrderInfoByUserId(Integer userId) {
-        List<OrderInfo> orderInfoList = new ArrayList<>();
-        List<Order> orderList = orderService.findOrderByUserId(userId);
-
-        for (Order order : orderList) {
-            List<OrderItem> orderItems = orderService.orderitem(order.getId()); // 单条记录
-            List<Product> products = new ArrayList<>();
-            Map<Product, Integer> map = new HashMap<>();
-            for (OrderItem orderItem : orderItems) {
-                Product product = productsService.oneProduct(orderItem.getProductId());
-                products.add(product);
-                map.put(product, orderItem.getBuynum());  //哪个商品 ，买了多少
-            }
-            OrderInfo orderInfo = new OrderInfo();
-            orderInfo.setOrder(order);
-            orderInfo.setMap(map);
-            orderInfo.setProductsList(products);
-            orderInfoList.add(orderInfo);
+    public Result showorder(String userId) {
+        Result result = new Result();
+        List<OrderInfo> orderInfoList;
+        try {
+            orderInfoList = orderService.findOrderInfoByUserId(Integer.parseInt(userId));
+        } catch (Exception e) {
+            return result.fail().msg(e.getMessage());
         }
-        return orderInfoList;
+
+        return result.success().data(orderInfoList).msg("获取订单成功");
     }
+
+
 
     @Operation(summary = "支付订单")
     @GetMapping("/payorder")
-    public JSONObject payorder(String orderId) {
-        JSONObject json = new JSONObject();
+    public Result payorder(String orderId) {
+        Result result = new Result();
         try {
             orderService.payorder(orderId);
         } catch (Exception e) {
-            json.put("status", 500);
-            return json;
+            return result.fail().msg(e.getMessage());
         }
-        json.put("status", 200);
-        return json;
+        return result.success().msg("支付订单成功");
 
     }
 
     @Operation(summary = "删除订单")
     @GetMapping("/delorder")
-    public JSONObject deleteOrder(String orderId) {
-        JSONObject json = new JSONObject();
+    public Result deleteOrder(String orderId) {
+        Result result = new Result();
         try {
             orderService.delorder(orderId);
         } catch (Exception e) {
-            json.put("status", 500);
-            return json;
+            return result.fail().msg(e.getMessage());
         }
-        orderService.delorder(orderId);
-        json.put("status", 200);
-        return json;
+        return result.success().msg("删除订单成功");
     }
 }

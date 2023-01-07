@@ -1,20 +1,21 @@
 package com.norato.easymall.controller.admin;
 
-import com.alibaba.fastjson.JSONObject;
 import com.norato.easymall.dto.ProductInfo;
+import com.norato.easymall.dto.result.Result;
 import com.norato.easymall.entity.Product;
 import com.norato.easymall.service.ProductService;
+import com.norato.easymall.utils.FileUploadUtil;
 import jakarta.servlet.http.HttpServletRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,103 +27,92 @@ public class ProductsControllerAdmin {
     @Autowired
     private ProductService productService;
 
+    @Value("${file.upload.path}")
+    private String uploadPath;
+
     @Operation(summary = "添加商品")
     @PostMapping(value = "/save")
-    public JSONObject save(ProductInfo myproduct, HttpServletRequest request) {
-        JSONObject json = new JSONObject();
+    public Result save(ProductInfo myproduct, HttpServletRequest request) {
+        Result result = new Result();
         try {
             String msg = productService.save(myproduct, request);
             System.out.println(msg);
             if (msg.equals("商品添加成功")) {
-                json.put("status", 200);
+                result.success();
             } else {
-                json.put("status", 500);
+                result.fail();
             }
-            json.put("msg", msg);
+            result.msg(msg);
         } catch (Exception e) {
-            json.put("status", 500);
+            result.fail();
         }
-        return json;
+        return result;
     }
 
     @Operation(summary = "上架商品")
     @GetMapping("/OnSale")
-    public JSONObject OnSale(String ids) {
-        JSONObject json = new JSONObject();
+    public Result OnSale(String ids) {
+        Result result = new Result();
         Map<String, Object> map = new HashMap<>();
         map.put("id", ids);
         map.put("status", 1);
         try {
             productService.updateSaleStatus(map);
-            json.put("status", 200);
         } catch (Exception e) {
-            json.put("status", 500);
-            json.put("msg", "设置上架失败，ProductControllerAdmin找错去吧");
+            return result.fail().msg(e.getMessage());
         }
-        return json;
+        return result.success().msg("设置上架成功");
     }
 
     @Operation(summary = "下架商品")
     @GetMapping("/OffSale")
-    public JSONObject OffSale(String ids) {
-        JSONObject json = new JSONObject();
+    public Result OffSale(String ids) {
+        Result result = new Result();
         Map<String, Object> map = new HashMap<>();
         map.put("id", ids);
         map.put("status", 0);
         try {
             productService.updateSaleStatus(map);
-            json.put("status", 200);
         } catch (Exception e) {
-            json.put("status", 500);
-            json.put("msg", "设置下架失败，ProductControllerAdmin找错去吧");
+            return result.fail().msg(e.getMessage());
         }
-        System.out.println(json);
-        return json;
+        return result.success().msg("设置下架成功");
     }
 
     @Operation(summary = "上传图片")
     @PostMapping("/uploadImg")
-    public JSONObject uploadImg(HttpServletRequest request) {
-
-        JSONObject json = new JSONObject();
+    public Result uploadImg(MultipartFile pic) {
+        Result result = new Result();
         try {
-            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-            MultipartFile multipartFile = multipartRequest.getFile("pic");
-            json.put("filename", multipartFile.getOriginalFilename());
+            FileUploadUtil.uploadFile(uploadPath, pic);
         } catch (Exception e) {
-            json.put("error", 0);
+            return result.fail().msg(e.getMessage());
         }
-        return json;
+        return result.success().msg("上传成功");
     }
 
     @Operation(summary = "后台修改商品")
     @PostMapping("/update")
-    public JSONObject productUpdate(Product product) {
-        JSONObject json = new JSONObject();
+    public Result productUpdate(Product product) {
+        Result result = new Result();
         try {
-            System.out.println("更新正在执行");
             productService.updateProduct(product);
-            json.put("status", 200);
         } catch (Exception e) {
-            json.put("status", 500);
-            json.put("msg", "出错啦，还不快去productController查bug");
+            return result.fail().msg(e.getMessage());
         }
-        return json;
+        return result.success().msg("修改成功");
     }
 
     @Operation(summary = "后台删除商品")
     @GetMapping("/delete")
-    public JSONObject productDelete(String ids) {
-        JSONObject json = new JSONObject();
+    public Result productDelete(String ids) {
+        Result result = new Result();
         try {
-            System.out.println("正在删除商品");
             productService.deleteProduct(ids);
-            json.put("status", 200);
         } catch (Exception e) {
-            json.put("msg", "删除出问题了");
-            json.put("status", 500);
+            return result.fail().msg(e.getMessage());
         }
-        return json;
+        return result.success().msg("删除成功");
     }
 
 

@@ -1,6 +1,8 @@
 package com.norato.easymall.controller;
 
-import com.alibaba.fastjson.JSONObject;
+
+import com.norato.easymall.dto.result.Result;
+import com.norato.easymall.dto.result.UsernameAndIdResult;
 import com.norato.easymall.entity.User;
 import com.norato.easymall.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,50 +24,43 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Operation(summary = "查询用户名是否存在")
+    @Operation(summary = "查询用户名是否可用")
     @GetMapping("/checkUser")
-    public JSONObject checkUser(String username) {
-        JSONObject json = new JSONObject();
+    public Result checkUser(String username) {
+        Result result = new Result();
         if (userService.login(username) == null) {
-            json.put("status", 200);
-        } else {
-            json.put("status", 500);
+            return result.success().msg("用户名可用");
         }
-        return json;
+        return result.fail().msg("用户名已存在");
     }
 
     @Operation(summary = "注册用户")
     @PostMapping("/register")
-    public JSONObject regist(String username, String password, String nickname, String email) {
-        JSONObject json = new JSONObject();
-        User user = new User();
-        user.setEmail(email);
-        user.setNickname(nickname);
-        user.setUsername(username);
-        user.setPassword(bCryptPasswordEncoder.encode(password));
-        if (userService.register(user) > 0) {
-            json.put("status", 200);
-        } else {
-            json.put("status", 500);
+    public Result regist(User user) {
+        Result result = new Result();
+        if (userService.login(user.getUsername()) != null) {
+            return result.fail().msg("用户名已存在");
         }
-        return json;
+        user.setId(null);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        if (userService.register(user) > 0) {
+            return result.success();
+        }
+        return result.fail();
     }
 
     @Operation(summary = "查询用户ID")
     @GetMapping("/query")
-    public JSONObject query(String username) {
-        System.out.println(username);
-        System.out.println("\n\n\n\n");
+    public UsernameAndIdResult query(String username) {
+        UsernameAndIdResult result = new UsernameAndIdResult();
         User user1 = userService.login(username);
-        JSONObject json = new JSONObject();
         if (user1 != null) {
-            json.put("status", 200);
-            json.put("username", user1.getUsername());
-            json.put("userId", user1.getId());
-        } else {
-            json.put("status", 500);
+            return result.success()
+                    .msg("查询成功")
+                    .username(user1.getUsername())
+                    .userId(user1.getId());
         }
-        return json;
+        return result.fail();
     }
 
 }

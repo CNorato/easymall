@@ -1,7 +1,7 @@
 package com.norato.easymall.security;
 
 import com.alibaba.fastjson.JSONObject;
-import jakarta.servlet.ServletException;
+import com.norato.easymall.dto.result.Result;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
@@ -19,10 +19,8 @@ public class CustomizeAuthenticationEntryPoint implements AuthenticationEntryPoi
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        JSONObject json = new JSONObject();
-        json.put("status", 500);
-        json.put("message", "未登录");
+        Result result = new Result().fail().msg("未登录");
         response.setContentType("application/json;charset=utf-8");
-        response.getWriter().write(json.toJSONString());
+        response.getWriter().write(JSONObject.toJSONString(result));
     }
 }

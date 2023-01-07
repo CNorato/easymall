@@ -2,17 +2,18 @@ package com.norato.easymall.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.norato.easymall.dto.CartInfo;
+import com.norato.easymall.dto.OrderInfo;
+import com.norato.easymall.dto.SaleProduct;
 import com.norato.easymall.entity.Order;
 import com.norato.easymall.entity.OrderItem;
 import com.norato.easymall.entity.Product;
-import com.norato.easymall.mapper.CartMapper;
 import com.norato.easymall.mapper.OrderItemMapper;
 import com.norato.easymall.mapper.OrderMapper;
-import com.norato.easymall.mapper.ProductsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,16 +21,16 @@ import java.util.Map;
 @Service("orderService")
 public class OrderServiceImpl implements OrderService {
 	@Autowired
-	private CartMapper cartMapper;
-
-	@Autowired
 	private OrderMapper orderMapper;
 
 	@Autowired
 	private OrderItemMapper orderItemMapper;
 
 	@Autowired
-	private ProductsMapper productsMapper;
+	private ProductService productService;
+
+	@Autowired
+	private CartService cartService;
 
 	@Override
 	@Transactional
@@ -38,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
 		double sum=0.0;
 		for(String cartID:arrCartIds){
 			Integer cid = Integer.parseInt(cartID);
-			CartInfo cartInfo = cartMapper.findByCartID(cid);
+			CartInfo cartInfo = cartService.findByCartID(cid);
 			String pid= cartInfo.getPid();
 			int buynum= cartInfo.getNum();
 			Double price = cartInfo.getPrice();
@@ -54,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
 			map.put("pid", pid);
 			map.put("buynum", buynum);
 			updateSoldNum(map);              ///修改
-			cartMapper.deleteById(cid);
+			cartService.delCart(cid);
 		}
 		myOrder.setMoney(sum);
 		orderMapper.insert(myOrder);
@@ -124,13 +125,58 @@ public class OrderServiceImpl implements OrderService {
 //		 where id=#{pid}
     public void updateSoldNum(Map<String,Object> map) {
         String pid = (String) map.get("pid");
-        Product product = productsMapper.selectById(pid);
+        Product product = productService.prodInfo(pid);
         int buynum = (int) map.get("buynum");
         product.setSoldnum(product.getSoldnum()+buynum);
         product.setPnum(product.getPnum()-buynum);
 
-        productsMapper.updateById(product);
+        productService.updateProduct(product);
     }
 
+	public List<OrderInfo> findOrderInfoByUserId(Integer userId) {
+		List<Order> orderList = findOrderByUserId(userId);
 
+		return getOrderInfoList(orderList);
+	}
+
+	private List<OrderInfo> getOrderInfoList(List<Order> orderList) {
+		List<OrderInfo> orderInfoList = new ArrayList<>();
+		for (Order order : orderList) {
+			List<OrderItem> orderItems = orderitem(order.getId()); // 单条记录
+			List<Product> products = new ArrayList<>();
+			Map<Product, Integer> map = new HashMap<>();
+			for (OrderItem orderItem : orderItems) {
+				Product product = productService.oneProduct(orderItem.getProductId());
+				products.add(product);
+				map.put(product, orderItem.getBuynum());  //哪个商品 ，买了多少
+			}
+			OrderInfo orderInfo = new OrderInfo();
+			orderInfo.setOrder(order);
+			orderInfo.setMap(map);
+			orderInfo.setProductsList(products);
+			orderInfoList.add(orderInfo);
+		}
+		return orderInfoList;
+	}
+
+	public List<SaleProduct> findSaleProduct() {
+		List<SaleProduct> saleList = new ArrayList<>();
+		List<OrderItem> orderList = prodsale();
+
+		for (OrderItem orderItem : orderList) {
+			SaleProduct saleProduct = new SaleProduct();
+			saleProduct.setOrderItem(orderItem);
+			Product product = productService.prodInfo(orderItem.getProductId());// 单条记录
+			saleProduct.setProduct(product);
+			saleList.add(saleProduct);
+		}
+
+		return saleList;
+	}
+
+	public List<OrderInfo> findOrderInfoByPaystate(Integer paystate) {
+		List<Order> orderList = findOrderByPaystate(paystate);
+
+		return getOrderInfoList(orderList);
+	}
 }

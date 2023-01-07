@@ -1,7 +1,7 @@
 package com.norato.easymall.security;
 
 import com.alibaba.fastjson.JSONObject;
-import jakarta.servlet.ServletException;
+import com.norato.easymall.dto.result.Result;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,10 +20,8 @@ public class CustomizeAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
-        JSONObject json = new JSONObject();
-        json.put("status", 500);
-        json.put("message", "权限不足");
+        Result result = new Result().fail().msg("权限不足");
         response.setContentType("application/json;charset=utf-8");
-        response.getWriter().write(json.toJSONString());
+        response.getWriter().write(JSONObject.toJSONString(result));
     }
 }
