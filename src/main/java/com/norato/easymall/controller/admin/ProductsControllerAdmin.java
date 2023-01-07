@@ -5,7 +5,6 @@ import com.norato.easymall.dto.result.Result;
 import com.norato.easymall.entity.Product;
 import com.norato.easymall.service.ProductService;
 import com.norato.easymall.utils.FileUploadUtil;
-import jakarta.servlet.http.HttpServletRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,10 +31,10 @@ public class ProductsControllerAdmin {
 
     @Operation(summary = "添加商品")
     @PostMapping(value = "/save")
-    public Result save(ProductInfo myproduct, HttpServletRequest request) {
+    public Result save(ProductInfo productInfo) {
         Result result = new Result();
         try {
-            String msg = productService.save(myproduct, request);
+            String msg = productService.save(productInfo);
             System.out.println(msg);
             if (msg.equals("商品添加成功")) {
                 result.success();
@@ -83,12 +82,13 @@ public class ProductsControllerAdmin {
     @PostMapping("/uploadImg")
     public Result uploadImg(MultipartFile pic) {
         Result result = new Result();
+        String path;
         try {
-            FileUploadUtil.uploadFile(uploadPath, pic);
+            path = FileUploadUtil.uploadFile(uploadPath, pic);
         } catch (Exception e) {
             return result.fail().msg(e.getMessage());
         }
-        return result.success().msg("上传成功");
+        return result.success().msg("上传成功").data(path);
     }
 
     @Operation(summary = "后台修改商品")

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.norato.easymall.dto.ProductInfo;
 import com.norato.easymall.entity.Product;
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ public interface ProductService {
 
     Product oneProduct(String product_id);
 
-    String save(ProductInfo myProduct, HttpServletRequest request);
+    String save(ProductInfo myProduct);
 
     List<Product> allprods();
 
