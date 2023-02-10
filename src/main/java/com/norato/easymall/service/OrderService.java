@@ -1,6 +1,7 @@
 package com.norato.easymall.service;
 
 
+import com.norato.easymall.dto.CartInfo;
 import com.norato.easymall.dto.OrderInfo;
 import com.norato.easymall.dto.SaleProduct;
 import com.norato.easymall.entity.Order;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    void addOrder(String cartIds, Order myOrder);
+    void addOrder(List<CartInfo> carts, Order myOrder);
 
     List<Order> findOrderByUserId(Integer userId);
 
