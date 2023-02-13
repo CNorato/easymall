@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -91,16 +92,36 @@ public class ProductsControllerAdmin {
         return result.success().msg("上传成功").data(path);
     }
 
-    @Operation(summary = "后台修改商品")
+    @Operation(summary = "后台修改商品(修改图片url无效)")
     @PostMapping("/update")
     public Result productUpdate(Product product) {
         Result result = new Result();
         try {
+            product.setImgurl(null);
             productService.updateProduct(product);
         } catch (Exception e) {
             return result.fail().msg(e.getMessage());
         }
         return result.success().msg("修改成功");
+    }
+
+    @Operation(summary = "修改商品图片")
+    @PostMapping("/updateImg")
+    public Result uploadImg(String id, MultipartFile pic) {
+        Result result = new Result();
+        String path;
+        try {
+            Product product = productService.findProductById(id);
+            if (product == null) {
+                return result.fail().msg("商品不存在");
+            }
+            path = FileUploadUtil.uploadFile(uploadPath, pic);
+            product.setImgurl(path);
+            productService.updateProduct(product);
+        } catch (Exception e) {
+            return result.fail().msg(e.getMessage());
+        }
+        return result.success().msg("修改成功").data(path);
     }
 
     @Operation(summary = "后台删除商品")

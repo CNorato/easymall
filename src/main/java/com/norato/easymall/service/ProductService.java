@@ -39,5 +39,5 @@ public interface ProductService {
     void deleteProduct(String id);
 
     //查询商品
-    List<Product> findProductById(Integer Id);
+    Product findProductById(String Id);
 }

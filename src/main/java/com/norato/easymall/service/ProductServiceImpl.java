@@ -154,9 +154,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findProductById(Integer Id) {
-        QueryWrapper<Product> wrapper = new QueryWrapper<>();
-        wrapper.eq("Id", Id);
-        return productsMapper.selectList(wrapper);
+    public Product findProductById(String Id) {
+        return productsMapper.selectById(Id);
     }
 }
